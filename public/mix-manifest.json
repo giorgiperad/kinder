@@ -1,0 +1,15 @@
+{
+    "/js/vendors/admin-lte-core.js": "/js/vendors/admin-lte-core.js?id=02e283a7085ad51e7a90",
+    "/js/bootstrap.js": "/js/bootstrap.js?id=3cdd3e25f123ace9db5f",
+    "/js/app.js": "/js/app.js?id=b715bb0d31b8641b6391",
+    "/js/manifest.js": "/js/manifest.js?id=c60267b26576e4bba37d",
+    "/js/chunks/materialLayout.js": "/js/chunks/materialLayout.js?id=1ac62c21171e254e0123",
+    "/js/chunks/checkoutPage.js": "/js/chunks/checkoutPage.js?id=6036be3d618abc2849d3",
+    "/js/chunks/AddressForm.js": "/js/chunks/AddressForm.js?id=f7dd1aa2281d6f8b9e93",
+    "/js/chunks/PaymentForm.js": "/js/chunks/PaymentForm.js?id=35833255fb2e8b30159d",
+    "/js/chunks/ReviewOrder.js": "/js/chunks/ReviewOrder.js?id=4ee55fd5a4c612a9ef92",
+    "/js/chunks/CheckoutSuccess.js": "/js/chunks/CheckoutSuccess.js?id=2cd2d7ab8302e96c3dae",
+    "/css/vendors/admin-lte-core.css": "/css/vendors/admin-lte-core.css?id=71cddfc8caccebf4dbcc",
+    "/css/app.css": "/css/app.css?id=35d94dea240561b13113",
+    "/js/vendor.js": "/js/vendor.js?id=73faa95cdf247abc78b9"
+}
