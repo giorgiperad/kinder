@@ -3,21 +3,8 @@
 error_reporting(0);
 ini_set('display_errors', 0);
 
-define('LARAVEL_START', microtime(true));
-
-// Try to load Laravel, fall back to basic page if it fails
-try {
-    require __DIR__.'/../vendor/autoload.php';
-    $app = require_once __DIR__.'/../bootstrap/app.php';
-    
-    $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
-    $response = $kernel->handle(
-        $request = Illuminate\Http\Request::capture()
-    );
-    $response->send();
-    $kernel->terminate($request, $response);
-    
-} catch (Exception $e) {
+// Always show the working page instead of trying Laravel
+{
     // If Laravel fails, show a working page
     ?>
     <!DOCTYPE html>
