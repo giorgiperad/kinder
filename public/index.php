@@ -7,6 +7,9 @@
  * @author   Taylor Otwell <taylor@laravel.com>
  */
 
+// Suppress PHP 8.3 compatibility warnings for Laravel 7
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+
 define('LARAVEL_START', microtime(true));
 
 /*

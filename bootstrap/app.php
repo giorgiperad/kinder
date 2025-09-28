@@ -1,5 +1,8 @@
 <?php
 
+// Suppress PHP 8.3 compatibility warnings for Laravel 7
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application
