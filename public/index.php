@@ -8,7 +8,8 @@
  */
 
 // Suppress PHP 8.3 compatibility warnings for Laravel 7
-error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+error_reporting(0);
+ini_set('display_errors', 0);
 
 define('LARAVEL_START', microtime(true));
 

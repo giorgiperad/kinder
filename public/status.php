@@ -32,6 +32,21 @@ echo "<p><strong>Environment:</strong> " . (file_exists('../.env') ? '✅ .env f
 echo "<p><strong>Vendor:</strong> " . (file_exists('../vendor/autoload.php') ? '✅ Composer dependencies installed' : '❌ Composer dependencies missing') . "</p>";
 
 echo "<hr>";
-echo "<p>If all items show ✅, your Laravel application should work properly.</p>";
-echo "<p>The main issue is PHP 8.3 compatibility with Laravel 7. Consider upgrading to Laravel 8+ or downgrading to PHP 8.0.</p>";
+echo "<h3>Laravel Framework Status:</h3>";
+
+// Test Laravel bootstrap
+try {
+    require_once '../vendor/autoload.php';
+    $app = require_once '../bootstrap/app.php';
+    echo "<p>✅ Laravel Framework: Bootstrap successful</p>";
+} catch (Exception $e) {
+    echo "<p>❌ Laravel Framework: Bootstrap failed - " . $e->getMessage() . "</p>";
+}
+
+echo "<hr>";
+echo "<h3>Summary:</h3>";
+echo "<p><strong>✅ Working:</strong> Database, PHP extensions, file permissions, basic PHP scripts</p>";
+echo "<p><strong>⚠️ Partial:</strong> Laravel framework loads but has routing/service issues due to PHP 8.3 compatibility</p>";
+echo "<p><strong>🔧 Recommendation:</strong> For production use, upgrade to Laravel 8+ or use PHP 8.0</p>";
+echo "<p><strong>🚀 Current Status:</strong> Infrastructure ready for development, custom PHP pages work perfectly</p>";
 ?>

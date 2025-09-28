@@ -16,6 +16,11 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
+// Simple test route that works without authentication
+Route::get('/test', function () { 
+    return '<h1>✅ Laravel Routes Working!</h1><p>Your Laravel application is successfully handling routes.</p><p><a href="/status.php">Check System Status</a></p>'; 
+});
+
 Route::get('/', function () { return redirect()->route('login'); });
 Route::get('/kids-registration', 'ChildrenController@index')->name('children');
 Route::namespace('API')->prefix('kindergarteners')->name('kindergarteners.')->group(function () {
