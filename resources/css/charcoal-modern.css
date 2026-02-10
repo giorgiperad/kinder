@@ -1,0 +1,40 @@
+:root {
+  --primary-color: #37474F;
+  --secondary-color: #607D8B;
+  --accent-color: #FF5722;
+  --background-color: #FAFAFA;
+  --text-color: #212121;
+}
+
+/* Button Styles */
+.button {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button.secondary {
+  background-color: var(--secondary-color);
+}
+
+/* Card Styles */
+.card {
+  background-color: white;
+  border: 1px solid var(--secondary-color);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Typography Styles */
+h1 {
+  color: var(--text-color);
+  font-size: 2em;
+}
+h2 {
+  color: var(--text-color);
+  font-size: 1.5em;
+}
