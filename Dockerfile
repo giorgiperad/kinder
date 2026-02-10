@@ -1,5 +1,17 @@
 FROM php:8.3-fpm-alpine
 
+RUN apk add --no-cache \
+    libzip-dev \
+    zip \
+    unzip \
+    git \
+    nginx \
+    supervisor \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql zip pcntl bcmath gd
 # Install system dependencies and PHP extensions
 RUN apk add --no-cache \
     libzip-dev \
@@ -8,8 +20,11 @@ RUN apk add --no-cache \
     git \
     nginx \
     supervisor \
-    && docker-php-ext-install pdo_mysql zip pcntl bcmath
-
+    libpng-dev \          # for GD
+    libjpeg-turbo-dev \   # for GD JPEG support
+    freetype-dev \        # for GD font support
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql zip pcntl bcmath gd
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
