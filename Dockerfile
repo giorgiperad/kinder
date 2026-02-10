@@ -1,7 +1,6 @@
-# Use a lightweight PHP + Alpine base
 FROM php:8.3-fpm-alpine
 
-# Install required system packages and PHP extensions
+# Install system dependencies and PHP extensions
 RUN apk add --no-cache \
     libzip-dev \
     zip \
@@ -9,22 +8,18 @@ RUN apk add --no-cache \
     git \
     nginx \
     supervisor \
-    && docker-php-ext-install \
-        pdo_mysql \
-        zip \
-        pcntl \
-        bcmath
+    && docker-php-ext-install pdo_mysql zip pcntl bcmath
 
-# Install Composer from official image
+# Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Create nginx config file (single RUN to avoid parse issues)
+# Create a clean nginx config (single echo with \n escapes)
 RUN mkdir -p /run/nginx && \
     echo 'server {\n\
         listen 8080;\n\
         server_name localhost;\n\
         root /var/www/public;\n\
-        index index.php;\n\
+        index index.php index.html;\n\
 \n\
         location / {\n\
             try_files $uri $uri/ /index.php?$query_string;\n\
@@ -38,40 +33,40 @@ RUN mkdir -p /run/nginx && \
         }\n\
     }' > /etc/nginx/http.d/default.conf
 
-# Supervisord config to manage php-fpm + nginx
+# Supervisord config (also escaped)
 RUN echo '[supervisord]\n\
 nodaemon=true\n\
 \n\
 [program:php-fpm]\n\
-command=php-fpm\n\
+command=php-fpm --nodaemonize\n\
 autorestart=true\n\
+stdout_logfile=/dev/stdout\n\
+stdout_logfile_maxbytes=0\n\
+stderr_logfile=/dev/stderr\n\
+stderr_logfile_maxbytes=0\n\
 \n\
 [program:nginx]\n\
 command=nginx -g "daemon off;"\n\
-autorestart=true' > /etc/supervisor/conf.d/supervisord.conf
+autorestart=true\n\
+stdout_logfile=/dev/stdout\n\
+stdout_logfile_maxbytes=0\n\
+stderr_logfile=/dev/stderr\n\
+stderr_logfile_maxbytes=0' > /etc/supervisord.conf
 
-# Set working directory
 WORKDIR /var/www
 
-# Copy your Laravel application code
 COPY . .
 
-# Install Composer dependencies (production optimized)
-RUN composer install \
-    --optimize-autoloader \
-    --no-dev \
-    --no-interaction \
-    --prefer-dist
+# Composer install (production)
+RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
 
-# Install & build frontend assets (Laravel Mix / Vite if used)
-# Use || true so build doesn't fail if no npm needed
+# Frontend build (safe: continues even if fails)
 RUN npm ci --only=production && npm run prod || true
 
-# Set correct permissions for Laravel
+# Permissions
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Cloud Run expects port from $PORT env (defaults to 8080)
 EXPOSE 8080
 
-# Start services with supervisord
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Start both services
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
