@@ -20,9 +20,10 @@ RUN apk add --no-cache \
     git \
     nginx \
     supervisor \
-    libpng-dev \          # for GD
-    libjpeg-turbo-dev \   # for GD JPEG support
-    freetype-dev \        # for GD font support
+    libpng-dev \
+libjpeg-turbo-dev \
+freetype-dev \
+
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql zip pcntl bcmath gd
 # Composer
