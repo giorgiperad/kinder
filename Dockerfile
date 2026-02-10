@@ -1,35 +1,37 @@
 FROM php:8.3-fpm-alpine
 
+# ----------------------------------------------------
+# System dependencies & PHP extensions
+# ----------------------------------------------------
 RUN apk add --no-cache \
-    libzip-dev \
-    zip \
-    unzip \
-    git \
     nginx \
     supervisor \
+    git \
+    zip \
+    unzip \
+    libzip-dev \
     libpng-dev \
     libjpeg-turbo-dev \
     freetype-dev \
+    oniguruma-dev \
+    $PHPIZE_DEPS \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql zip pcntl bcmath gd
-# Install system dependencies and PHP extensions
-RUN apk add --no-cache \
-    libzip-dev \
-    zip \
-    unzip \
-    git \
-    nginx \
-    supervisor \
-    libpng-dev \
-libjpeg-turbo-dev \
-freetype-dev \
+    && docker-php-ext-install \
+        pdo_mysql \
+        zip \
+        pcntl \
+        bcmath \
+        gd \
+    && apk del $PHPIZE_DEPS
 
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql zip pcntl bcmath gd
+# ----------------------------------------------------
 # Composer
+# ----------------------------------------------------
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Create a clean nginx config (single echo with \n escapes)
+# ----------------------------------------------------
+# Nginx config
+# ----------------------------------------------------
 RUN mkdir -p /run/nginx && \
     echo 'server {\n\
         listen 8080;\n\
@@ -49,7 +51,9 @@ RUN mkdir -p /run/nginx && \
         }\n\
     }' > /etc/nginx/http.d/default.conf
 
-# Supervisord config (also escaped)
+# ----------------------------------------------------
+# Supervisor config
+# ----------------------------------------------------
 RUN echo '[supervisord]\n\
 nodaemon=true\n\
 \n\
@@ -69,20 +73,31 @@ stdout_logfile_maxbytes=0\n\
 stderr_logfile=/dev/stderr\n\
 stderr_logfile_maxbytes=0' > /etc/supervisord.conf
 
+# ----------------------------------------------------
+# App setup
+# ----------------------------------------------------
 WORKDIR /var/www
-
 COPY . .
 
-# Composer install (production)
-RUN composer install --optimize-autoloader --no-dev --no-interaction --prefer-dist
+# ----------------------------------------------------
+# Composer install (Laravel-safe)
+# ----------------------------------------------------
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction \
+    --prefer-dist
 
-# Frontend build (safe: continues even if fails)
-RUN npm ci --only=production && npm run prod || true
+# ----------------------------------------------------
+# Frontend build (optional, won't fail build)
+# ----------------------------------------------------
+RUN if [ -f package.json ]; then npm ci --only=production && npm run prod || true; fi
 
-# Permissions
+# ----------------------------------------------------
+# Permissions (Laravel)
+# ----------------------------------------------------
 RUN chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 8080
 
-# Start both services
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
